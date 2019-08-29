@@ -1,4 +1,4 @@
-// This class defines an element that is stored
+/// This class defines an element that is stored
 // in the garbage collection information list.
 //
 template <class T>
@@ -17,22 +17,25 @@ array, then arraySize contains its size */
     // Here, mPtr points to the allocated memory.
     // If this is an array, then size specifies
     // the size of the array.
-											//check
-    PtrDetails(void)
-    {
-        &memPtr=x;
-            arraySize=y;
-            if(arraySize > 0)
-            {
-               bool setIsArray();
-            }
-    }
+  explicit PtrDetails(T* m_ptr, const unsigned size)
+	{
+		memPtr = m_ptr;
+		refcount = 1;
+		
+		if (size != 0)
+		{
+			isArray = true;
+			arraySize = size;
+		}
+			
+		else
+		{
+			isArray = false;
+			arraySize = 0;
+		}
+	}
+    
 };
- PtrDetails:: bool setIsArray()
-{
-    isArray=true;
-    return isArray;
-}
 // Overloading operator== allows two class objects to be compared.
 // This is needed by the STL list class.
 template <class T>
@@ -40,8 +43,8 @@ bool operator==(const PtrDetails<T> &ob1,
                 const PtrDetails<T> &ob2)
 {
     // TODO: Implement operator==
-    obj_1.refcount==obj_2.refcount;
-    obj_1.memPtr==obj_2.memPtr;
-    obj_1.isArray==obj_2.isArray;
-    obj_1.arraySize==obj_2.arraySize;
+    ob1.refcount==ob2.refcount;
+    ob1.memPtr==ob2.memPtr;
+    ob1.isArray==ob2.isArray;
+    ob1.arraySize==ob2.arraySize;
 }
