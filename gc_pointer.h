@@ -97,7 +97,7 @@ template <class T, int size>
 std::list<PtrDetails<T> > Pointer<T, size>::refContainer;
 template <class T, int size>
 bool Pointer<T, size>::first = true;
-														//TODO
+
 // Constructor for both initialized and uninitialized objects. -> see class interface
 template<class T,int size>
 Pointer<T,size>::Pointer(T *t){
@@ -107,10 +107,39 @@ Pointer<T,size>::Pointer(T *t){
     first = false;
 
     // TODO: Implement Pointer constructor
+    auto p = findPtrInfo(t);
+
+	/* Already in the list, increment reference counter */
+	if (p != refContainer.end())
+	{
+		++p->refcount;
+	}
+
+	/* Add the entry to the list */
+	else
+	{
+		PtrDetails<T> pointer_obj(t, size);
+		refContainer.push_front(pointer_obj);
+	}
+
+	addr = t;
+	arraySize = size;
+
+	if (arraySize > 0)
+	{
+		std::cout << " Constructed a new pointer array with size: " << arraySize << std::endl;
+		isArray = true;
+	}
+
+	else
+	{
+		std::cout << "Constructed a new pointer object" << std::endl;
+		isArray = false;
+	}
+}
     // Lab: Smart Pointer Project Lab
 
-}
-															//CHECK
+
 // Copy constructor.
 template< class T, int size>
 Pointer<T,size>::Pointer(const Pointer &ob){
@@ -118,15 +147,23 @@ Pointer<T,size>::Pointer(const Pointer &ob){
     // TODO: Implement Pointer constructor
      typename std::list<PtrDetails<T> >::iterator p;
     p = findPtrInfo(ob.addr);
-    
-    // TODO: Implement copy constructor
-    Pointer(const Pointer &p);
-    refcount++;
-    // increment ref count
-    if(sizeof(*memPtr)==arraySize)
-    {
-      isArray=true;
-    }
+
+	/* Increment reference count and copy information */
+	++p->refcount;
+	addr = ob.addr;
+	arraySize = ob.arraySize;
+
+	if (arraySize > 0)
+	{
+		std::cout << " Copy-Constructed a new pointer array with size: " << arraySize << std::endl;
+		isArray = true;
+	}
+
+	else
+	{
+		std::cout << "Copy-Constructed a new pointer object" << std::endl;
+		isArray = false;
+	}
     // Lab: Smart Pointer Project Lab
 
 }
@@ -139,11 +176,16 @@ Pointer<T, size>::~Pointer(){
  
     typename std::list<PtrDetails<T> >::iterator p;
     p = findPtrInfo(addr);
-    if (p->refcount)
-        p->refcount--; 
-    // decrement ref count
-    // Collect garbage when a pointer goes out of scope.
-    collect();
+
+	/* Pointer out of scope, decrement reference count */
+	if (p->refcount)
+	{
+		--p->refcount;
+	}
+	std::cout << "Pointer destructed, decrementing reference counter" << std::endl;
+
+	/* Eventually collect garbage */
+	collect();
     // For real use, you might want to collect unused memory less frequently,
     // such as after refContainer has reached a certain size, after a certain number of Pointers have gone out of scope,
     // or when memory is low.
@@ -191,12 +233,12 @@ bool Pointer<T, size>::collect(){
 }
 
 // Overload assignment of pointer to Pointer.
-														//CHECK
+									//CHECK
 template <class T, int size>
 T *Pointer<T, size>::operator=(T *t){
 
     // TODO: Implement operator==
-    template <class T>
+ 
 bool operator==(const PtrDetails<T> &ob1,
                 const PtrDetails<T> &ob2)
 {
@@ -206,24 +248,28 @@ bool operator==(const PtrDetails<T> &ob1,
 
 }
 // Overload assignment of Pointer to Pointer.
-												//check
+								//CHECK
 template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
 
     // TODO: Implement operator==
    
     typename std::list<PtrDetails<T> >::iterator p;
+    
     // TODO: Implement assignment
     // First, decrement the reference count
     // for the memory currently being pointed to.
-    *memPtr--;
+    --p->memPtr;
     
     
     // Then, ncrement the reference count of
     // the new address.
-    memPtr++;
+    ++p->memPtr;
     // increment ref count
-    refcount++;
+    if(p->refcount)
+    {
+    	++p->refcount;
+    }
     // store the address.
     *memPtr=&rv;
      return;
