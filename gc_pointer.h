@@ -233,7 +233,7 @@ bool Pointer<T, size>::collect(){
 }
 
 // Overload assignment of pointer to Pointer.
-									//CHECK
+
 template <class T, int size>
 T *Pointer<T, size>::operator=(T *t){
 
@@ -248,7 +248,7 @@ bool operator==(const PtrDetails<T> &ob1,
 
 }
 // Overload assignment of Pointer to Pointer.
-								//CHECK
+
 template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
 
@@ -259,19 +259,20 @@ Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
     // TODO: Implement assignment
     // First, decrement the reference count
     // for the memory currently being pointed to.
-    --p->memPtr;
-    
+  
+         p = findPtrInfo(addr);
+	  p->memberPtr=&rv;
     
     // Then, ncrement the reference count of
     // the new address.
-    ++p->memPtr;
+  
     // increment ref count
     if(p->refcount)
     {
     	++p->refcount;
     }
     // store the address.
-    *memPtr=&rv;
+   
      return;
 
     // LAB: Smart Pointer Project Lab
