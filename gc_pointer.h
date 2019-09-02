@@ -253,8 +253,6 @@ template <class T, int size>
 Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
 
     // TODO: Implement operator==
-   
-    typename std::list<PtrDetails<T> >::iterator p;
     
     // TODO: Implement assignment
     // First, decrement the reference count
