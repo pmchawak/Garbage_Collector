@@ -260,20 +260,16 @@ Pointer<T, size> &Pointer<T, size>::operator=(Pointer &rv){
     // First, decrement the reference count
     // for the memory currently being pointed to.
   
-         p = findPtrInfo(addr);
-	  p->memberPtr=&rv;
-    
-    // Then, ncrement the reference count of
-    // the new address.
-  
-    // increment ref count
-    if(p->refcount)
-    {
-    	++p->refcount;
-    }
-    // store the address.
-   
-     return;
+    if(*this == rv)return *this;
+    typename std::list<PtrDetails<T> >::iterator p = findPtrInfo(addr);
+    p->refcount--;
+    if(p->refcount == 0)collect();
+    p = findPtrInfo(rv.addr);
+    p->refcount++;
+	this->addr = rv.addr;
+    this->isArray = rv.isArray;
+    this->arraySize = rv.arraySize;
+    return *this;
 
     // LAB: Smart Pointer Project Lab
 
