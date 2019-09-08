@@ -239,11 +239,22 @@ T *Pointer<T, size>::operator=(T *t){
 
     // TODO: Implement operator==
  
-bool operator==(const PtrDetails<T> &ob1,
-                const PtrDetails<T> &ob2)
-{
-    return (ob1.memPtr == ob2.memPtr);
-}
+typename std::list<PtrDetails<T> >::iterator p = findPtrInfo(addr);
+    p->refcount--;
+    if(p->refcount == 0)collect();
+    p = findPtrInfo(t);
+    if(p == refContainer.end()){
+        PtrDetails<T> newPtr(t, size);
+        refContainer.push_back(newPtr);
+    }else{
+        p->refcount++;
+    }
+    if(size > 0){
+        isArray = true;
+        arraySize = size;
+    }
+    this->addr = t;
+    return addr;
     // LAB: Smart Pointer Project Lab
 
 }
