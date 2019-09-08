@@ -253,6 +253,7 @@ typename std::list<PtrDetails<T> >::iterator p = findPtrInfo(addr);
         isArray = true;
         arraySize = size;
     }
+    //storing address and the returning to avoid memory leak
     this->addr = t;
     return addr;
     // LAB: Smart Pointer Project Lab
